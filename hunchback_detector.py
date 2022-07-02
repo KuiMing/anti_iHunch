@@ -1,16 +1,22 @@
 """
 Detect hunchback with face detection
 """
-import os
 from threading import Thread
+import tempfile
 import cv2
 from face_recognition import face_locations
+from gtts import gTTS
+from pygame import mixer
+
 
 # pylint: disable=maybe-no-member
-
-
-def warning():
-    os.system("say 抬頭挺胸")
+def warning(sentence, lang):
+    with tempfile.NamedTemporaryFile(delete=True) as file:
+        tts = gTTS(text=sentence, lang=lang)
+        tts.save('{}.mp3'.format(file.name))
+        mixer.init()
+        mixer.music.load('{}.mp3'.format(file.name))
+        mixer.music.play(1)
 
 
 def show_webcam(shrink: float = 0.25, detect_every_n_frames: int = 5) -> None:
@@ -31,7 +37,7 @@ def show_webcam(shrink: float = 0.25, detect_every_n_frames: int = 5) -> None:
             if len(locations) == 0:
                 noface += 1
                 if noface >= 10 and noface_conti < 3:
-                    thre = Thread(target=warning)
+                    thre = Thread(target=warning, args=["抬頭挺胸", "zh-tw"])
                     thre.start()
                     noface = 0
                     noface_conti += 1
