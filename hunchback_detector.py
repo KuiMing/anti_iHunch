@@ -4,13 +4,17 @@ Detect hunchback with face detection
 from threading import Thread
 import tempfile
 import cv2
+import numpy as np
 from face_recognition import face_locations
 from gtts import gTTS
 from pygame import mixer
 
 
 # pylint: disable=maybe-no-member
-def warning(sentence, lang):
+def warning(sentence: str, lang: str) -> None:
+    """
+    Warning for hunchback
+    """
     with tempfile.NamedTemporaryFile(delete=True) as file:
         tts = gTTS(text=sentence, lang=lang)
         tts.save('{}.mp3'.format(file.name))
@@ -19,9 +23,22 @@ def warning(sentence, lang):
         mixer.music.play(1)
 
 
+def label_object(location: tuple, text: str, shrink: float, frame: np.ndarray):
+    """
+    label the object on th frame
+    """
+    top, right, bottom, left = [int(i / shrink) for i in location]
+    cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+    cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255),
+                  cv2.FILLED)
+    font = cv2.FONT_HERSHEY_DUPLEX
+    cv2.putText(frame, text, (left + 6, bottom - 6), font, 1.0,
+                (255, 255, 255), 1)
+
+
 def show_webcam(shrink: float = 0.25, detect_every_n_frames: int = 5) -> None:
     """
-    show webcam
+    Show webcam
     """
     cam = cv2.VideoCapture(0)
     noface = 0
@@ -44,19 +61,8 @@ def show_webcam(shrink: float = 0.25, detect_every_n_frames: int = 5) -> None:
             else:
                 noface = 0
                 noface_conti = 0
-
             for location in locations:
-                top, right, bottom, left = [int(i / shrink) for i in location]
-
-                # Draw a box around the face
-                cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255),
-                              2)
-                # Draw a label with a name below the face
-                cv2.rectangle(frame, (left, bottom - 35), (right, bottom),
-                              (0, 0, 255), cv2.FILLED)
-                font = cv2.FONT_HERSHEY_DUPLEX
-                cv2.putText(frame, "face", (left + 6, bottom - 6), font, 1.0,
-                            (255, 255, 255), 1)
+                label_object(location, "face", shrink, frame)
             cv2.imshow('web stream', frame)
 
         esc_key = cv2.waitKey(1)
