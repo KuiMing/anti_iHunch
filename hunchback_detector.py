@@ -4,31 +4,33 @@ Detect hunchback with face detection
 import os
 import cv2
 import face_recognition
+from threading import Thread
 # pylint: disable=maybe-no-member
 
 
-def show_webcam():
+def warning():
+    os.system("say 抬頭挺胸")
+
+
+def show_webcam(shrink=0.25):
     """
     show webcam
     """
     cam = cv2.VideoCapture(0)
-    process_frame = True
     noface = 0
     noface_conti = 0
-    shrink = 0.25
+
     while True:
         ret_val, frame = cam.read()
         frame = cv2.flip(frame, 1)
         small_frame = cv2.resize(frame, (0, 0), fx=shrink, fy=shrink)
         if ret_val:
-
-            # if process_frame:
             face_locations = face_recognition.face_locations(small_frame)
             if len(face_locations) == 0:
                 noface += 1
-                # print("no face")
                 if noface >= 10 and noface_conti < 3:
-                    os.system("say 抬頭挺胸")
+                    thre = Thread(target=warning)
+                    thre.start()
                     noface = 0
                     noface_conti += 1
             else:
@@ -47,7 +49,6 @@ def show_webcam():
                 font = cv2.FONT_HERSHEY_DUPLEX
                 cv2.putText(frame, "face", (left + 6, bottom - 6), font, 1.0,
                             (255, 255, 255), 1)
-            process_frame = not process_frame
             cv2.imshow('web stream', frame)
 
         esc_key = cv2.waitKey(1)
