@@ -2,9 +2,10 @@
 Detect hunchback with face detection
 """
 import os
-import cv2
-import face_recognition
 from threading import Thread
+import cv2
+from face_recognition import face_locations
+
 # pylint: disable=maybe-no-member
 
 
@@ -12,21 +13,22 @@ def warning():
     os.system("say 抬頭挺胸")
 
 
-def show_webcam(shrink=0.25):
+def show_webcam(shrink: float = 0.25, detect_every_n_frames: int = 5) -> None:
     """
     show webcam
     """
     cam = cv2.VideoCapture(0)
     noface = 0
     noface_conti = 0
-
-    while True:
+    frame_count = 0
+    ret_val = True
+    while ret_val:
         ret_val, frame = cam.read()
         frame = cv2.flip(frame, 1)
         small_frame = cv2.resize(frame, (0, 0), fx=shrink, fy=shrink)
-        if ret_val:
-            face_locations = face_recognition.face_locations(small_frame)
-            if len(face_locations) == 0:
+        if frame_count % detect_every_n_frames == 0:
+            locations = face_locations(small_frame)
+            if len(locations) == 0:
                 noface += 1
                 if noface >= 10 and noface_conti < 3:
                     thre = Thread(target=warning)
@@ -37,7 +39,7 @@ def show_webcam(shrink=0.25):
                 noface = 0
                 noface_conti = 0
 
-            for location in face_locations:
+            for location in locations:
                 top, right, bottom, left = [int(i / shrink) for i in location]
 
                 # Draw a box around the face
@@ -55,6 +57,7 @@ def show_webcam(shrink=0.25):
 
         if esc_key == 27:
             break  # esc to quit
+        frame_count += 1
 
     cv2.destroyAllWindows()
 
