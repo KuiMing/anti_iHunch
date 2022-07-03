@@ -57,11 +57,12 @@ def trigger_warning(locations: list, noface: int, noface_conti: int) -> tuple:
 
 def show_webcam(shrink: float = 0.25,
                 detect_every_n_frames: int = 5,
-                show: bool = False) -> None:
+                show: bool = False,
+                camera=1) -> None:
     """
     Show webcam
     """
-    cam = cv2.VideoCapture(0)
+    cam = cv2.VideoCapture(camera)
     noface = 0
     noface_conti = 0
     frame_count = 0
@@ -90,11 +91,12 @@ def show_webcam(shrink: float = 0.25,
 
 @click.command()
 @click.option('--show', is_flag=True, default=False, help="show the video")
-def main(show):
+@click.option('--camera', default=0, help="choose camera")
+def main(show, camera):
     """
     start the program
     """
-    show_webcam(show=show)
+    show_webcam(show=show, camera=camera)
 
 
 # pylint: disable=no-value-for-parameter
