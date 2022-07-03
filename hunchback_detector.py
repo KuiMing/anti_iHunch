@@ -36,6 +36,23 @@ def label_object(location: tuple, text: str, shrink: float, frame: np.ndarray):
                 (255, 255, 255), 1)
 
 
+def trigger_warning(locations: list, noface: int, noface_conti: int) -> tuple:
+    """
+    Determine if the face cannot be detected and trigger a warning
+    """
+    if len(locations) == 0:
+        noface += 1
+        if noface >= 10 and noface_conti < 3:
+            thre = Thread(target=warning, args=["抬頭挺胸", "zh-tw"])
+            thre.start()
+            noface = 0
+            noface_conti += 1
+    else:
+        noface = 0
+        noface_conti = 0
+    return (noface, noface_conti)
+
+
 def show_webcam(shrink: float = 0.25, detect_every_n_frames: int = 5) -> None:
     """
     Show webcam
@@ -51,16 +68,8 @@ def show_webcam(shrink: float = 0.25, detect_every_n_frames: int = 5) -> None:
         small_frame = cv2.resize(frame, (0, 0), fx=shrink, fy=shrink)
         if frame_count % detect_every_n_frames == 0:
             locations = face_locations(small_frame)
-            if len(locations) == 0:
-                noface += 1
-                if noface >= 10 and noface_conti < 3:
-                    thre = Thread(target=warning, args=["抬頭挺胸", "zh-tw"])
-                    thre.start()
-                    noface = 0
-                    noface_conti += 1
-            else:
-                noface = 0
-                noface_conti = 0
+            noface, noface_conti = trigger_warning(locations, noface,
+                                                   noface_conti)
             for location in locations:
                 label_object(location, "face", shrink, frame)
             cv2.imshow('web stream', frame)
