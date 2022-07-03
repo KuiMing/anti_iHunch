@@ -8,9 +8,11 @@ import numpy as np
 from face_recognition import face_locations
 from gtts import gTTS
 from pygame import mixer
-
+import click
 
 # pylint: disable=maybe-no-member
+
+
 def warning(sentence: str, lang: str) -> None:
     """
     Warning for hunchback
@@ -53,7 +55,9 @@ def trigger_warning(locations: list, noface: int, noface_conti: int) -> tuple:
     return (noface, noface_conti)
 
 
-def show_webcam(shrink: float = 0.25, detect_every_n_frames: int = 5) -> None:
+def show_webcam(shrink: float = 0.25,
+                detect_every_n_frames: int = 5,
+                show: bool = False) -> None:
     """
     Show webcam
     """
@@ -70,25 +74,29 @@ def show_webcam(shrink: float = 0.25, detect_every_n_frames: int = 5) -> None:
             locations = face_locations(small_frame)
             noface, noface_conti = trigger_warning(locations, noface,
                                                    noface_conti)
-            for location in locations:
-                label_object(location, "face", shrink, frame)
-            cv2.imshow('web stream', frame)
+            if show:
+                for location in locations:
+                    label_object(location, "face", shrink, frame)
+                cv2.imshow('web stream', frame)
 
         esc_key = cv2.waitKey(1)
-
         if esc_key == 27:
             break  # esc to quit
+
         frame_count += 1
 
     cv2.destroyAllWindows()
 
 
-def main():
+@click.command()
+@click.option('--show', is_flag=True, default=False, help="show the video")
+def main(show):
     """
-    start program
+    start the program
     """
-    show_webcam()
+    show_webcam(show=show)
 
 
+# pylint: disable=no-value-for-parameter
 if __name__ == '__main__':
     main()
