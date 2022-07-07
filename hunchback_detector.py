@@ -38,13 +38,14 @@ def label_object(location: tuple, text: str, shrink: float, frame: np.ndarray):
                 (255, 255, 255), 1)
 
 
-def trigger_warning(locations: list, noface: int, noface_conti: int) -> tuple:
+def trigger_warning(locations: list, noface: int, noface_conti: int,
+                    limit: int) -> tuple:
     """
     Determine if the face cannot be detected and trigger a warning
     """
     if len(locations) == 0:
         noface += 1
-        if noface >= 10 and noface_conti < 3:
+        if noface >= limit and noface_conti < 3:
             thre = Thread(target=warning, args=["抬頭挺胸", "zh-tw"])
             thre.start()
             noface = 0
@@ -58,7 +59,8 @@ def trigger_warning(locations: list, noface: int, noface_conti: int) -> tuple:
 def show_webcam(shrink: float = 0.25,
                 detect_every_n_frames: int = 5,
                 show: bool = False,
-                camera=1) -> None:
+                camera: int = 1,
+                fhp_second: int = 60) -> None:
     """
     Show webcam
     """
@@ -74,8 +76,9 @@ def show_webcam(shrink: float = 0.25,
         small_frame = cv2.resize(frame, (0, 0), fx=shrink, fy=shrink)
         if frame_count % detect_every_n_frames == 0:
             locations = face_locations(small_frame)
+            limit = fhp_second * (30 // detect_every_n_frames)
             noface, noface_conti = trigger_warning(locations, noface,
-                                                   noface_conti)
+                                                   noface_conti, limit)
             if show:
                 for location in locations:
                     label_object(location, "face", shrink, frame)
@@ -96,11 +99,14 @@ def show_webcam(shrink: float = 0.25,
 @click.command()
 @click.option('--show', is_flag=True, default=False, help="show the video")
 @click.option('--camera', default=0, help="choose camera")
-def main(show, camera):
+@click.option('--fhps',
+              default=10,
+              help="Maximum Forward Head Posture duration (seconds)")
+def main(show, camera, fhps):
     """
     start the program
     """
-    show_webcam(show=show, camera=camera)
+    show_webcam(show=show, camera=camera, fhp_second=fhps)
 
 
 # pylint: disable=no-value-for-parameter
