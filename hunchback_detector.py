@@ -70,6 +70,7 @@ def show_webcam(shrink: float = 0.25,
     while ret_val:
         ret_val, frame = cam.read()
         frame = cv2.flip(frame, 1)
+        shape = frame.shape
         small_frame = cv2.resize(frame, (0, 0), fx=shrink, fy=shrink)
         if frame_count % detect_every_n_frames == 0:
             locations = face_locations(small_frame)
@@ -78,6 +79,9 @@ def show_webcam(shrink: float = 0.25,
             if show:
                 for location in locations:
                     label_object(location, "face", shrink, frame)
+                cv2.putText(frame, "Press ESC to quit", (40, 40), 0,
+                            1e-3 * shape[0], (0, 0, 255),
+                            int((shape[0] + shape[1]) // 900))
                 cv2.imshow('web stream', frame)
 
         esc_key = cv2.waitKey(1)
