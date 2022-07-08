@@ -29,13 +29,23 @@ def label_object(location: tuple, text: str, shrink: float, frame: np.ndarray):
     """
     label the object on th frame
     """
-    top, right, bottom, left = [int(i / shrink) for i in location]
-    cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
-    cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255),
-                  cv2.FILLED)
-    font = cv2.FONT_HERSHEY_DUPLEX
-    cv2.putText(frame, text, (left + 6, bottom - 6), font, 1.0,
-                (255, 255, 255), 1)
+    area = calculate_area(location)
+    if area > 9756 * 0.9:
+        top, right, bottom, left = [int(i / shrink) for i in location]
+        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255),
+                      cv2.FILLED)
+        font = cv2.FONT_HERSHEY_DUPLEX
+        cv2.putText(frame, text, (left + 6, bottom - 6), font, 1.0,
+                    (255, 255, 255), 1)
+
+
+def calculate_area(location: tuple):
+    """
+    Calculate area
+    """
+    top, right, bottom, left = location
+    return (right - left) * (bottom - top)
 
 
 def trigger_warning(locations: list, noface: int, noface_conti: int,
@@ -45,14 +55,20 @@ def trigger_warning(locations: list, noface: int, noface_conti: int,
     """
     if len(locations) == 0:
         noface += 1
-        if noface >= limit and noface_conti < 3:
-            thre = Thread(target=warning, args=["抬頭挺胸", "zh-tw"])
-            thre.start()
-            noface = 0
-            noface_conti += 1
+    elif len(locations) == 1:
+        area = calculate_area(locations[0])
+        if area < 9756 * 0.9:
+            noface += 1
+        else:
+            noface = noface_conti = 0
     else:
+        noface = noface_conti = 0
+
+    if noface >= limit and noface_conti < 3:
+        thre = Thread(target=warning, args=["抬頭挺胸", "zh-tw"])
+        thre.start()
         noface = 0
-        noface_conti = 0
+        noface_conti += 1
     return (noface, noface_conti)
 
 
