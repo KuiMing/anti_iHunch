@@ -95,8 +95,7 @@ def show_label(locations: tuple,
 def start_detection(shrink: float = 0.25,
                     detect_every_n_frames: int = 5,
                     show: bool = False,
-                    camera: int = 1,
-                    fhp_second: int = 60) -> None:
+                    camera: int = 1) -> None:
     """
     start to detect face
     """
@@ -113,7 +112,8 @@ def start_detection(shrink: float = 0.25,
         if frame_count % detect_every_n_frames == 0:
             locations = face_locations(small_frame)
             fhp_time, noface_conti = trigger_warning(locations, fhp_time,
-                                                     noface_conti, fhp_second,
+                                                     noface_conti,
+                                                     config["fhp_second"],
                                                      config["face_area"])
             if show:
                 show_label(locations, shrink, frame, config["face_area"])
@@ -136,11 +136,15 @@ def set_configure(shrink: float = 0.25,
     cam = cv2.VideoCapture(camera)
     frame_count = 0
     ret_val = True
-    text = "This is only for one user. Please keep your head up. Press Enter to start setting. "
+    lines = [
+        "This is only for one user. Please keep your head up. Press Enter to start setting.",
+        "Set limitation for Forward Head Posture. Press 1 for 10 sec, 2 for 1 min & 3 for 10 min.",
+        "Detect face size. Setting will finish in 3 seconds."
+    ]
+    text = lines[0]
     while ret_val:
         ret_val, frame = cam.read()
         frame = cv2.flip(frame, 1)
-        shape = frame.shape
         small_frame = cv2.resize(frame, (0, 0), fx=shrink, fy=shrink)
         if frame_count % detect_every_n_frames == 0:
             locations = face_locations(small_frame)
@@ -149,31 +153,41 @@ def set_configure(shrink: float = 0.25,
             if wait_key == 27:
                 break  # esc to quit
             if wait_key == 13:
-                text = "Start setting. Count Down 3 seconds"
-                count_down = 12
-            if text == "Start setting. Count Down 3 seconds":
+                text = lines[1]
+
+            if text == lines[1]:
+                if chr(wait_key & 255) == "1":
+                    fhp_second = 10
+                elif chr(wait_key & 255) == "2":
+                    fhp_second = 60
+                elif chr(wait_key & 255) == "3":
+                    fhp_second = 600
+                if chr(wait_key & 255) in ["1", "2", "3"]:
+                    text = lines[2]
+                    count_down = 12
+            if text == lines[2]:
                 area.append(calculate_area(location=locations[0]))
                 count_down -= 1
                 cv2.putText(frame, str(count_down // 4 + 1), (40, 200), 0,
-                            5e-3 * shape[0], (0, 0, 255),
-                            int((shape[0] + shape[1]) // 900))
+                            5e-3 * frame.shape[0], (0, 0, 255),
+                            int((frame.shape[0] + frame.shape[1]) // 900))
 
                 if count_down == 0:
                     break
             cv2.imshow('web stream', frame)
         frame_count += 1
     cv2.destroyAllWindows()
-    json.dump({"face_area": int(np.mean(area))}, open("config.json", "w"))
+    json.dump({
+        "face_area": int(np.mean(area)),
+        "fhp_second": fhp_second
+    }, open("config.json", "w"))
 
 
 @click.command()
 @click.option('--show', is_flag=True, default=False, help="show the video")
 @click.option('--camera', default=0, help="choose camera")
-@click.option('--fhps',
-              default=10,
-              help="Maximum Forward Head Posture duration (seconds)")
 @click.option('--setting', is_flag=True, default=False, help="set configure")
-def main(show, camera, fhps, setting):
+def main(show, camera, setting):
     """
     start the program
     """
@@ -181,7 +195,7 @@ def main(show, camera, fhps, setting):
         print("setting mode")
         set_configure(0.25, 5, camera=camera)
         show = True
-    start_detection(show=show, camera=camera, fhp_second=fhps)
+    start_detection(show=show, camera=camera)
 
 
 # pylint: disable=no-value-for-parameter
