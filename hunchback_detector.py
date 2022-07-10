@@ -5,6 +5,7 @@ import json
 import os
 from threading import Thread
 import tempfile
+import time
 import cv2
 import numpy as np
 from face_recognition import face_locations
@@ -51,35 +52,39 @@ def calculate_area(location: tuple):
     return (right - left) * (bottom - top)
 
 
-def trigger_warning(locations: list, noface: int, noface_conti: int,
+def trigger_warning(locations: list, fhp_time: float, noface_conti: int,
                     limit: int, face_area: float) -> tuple:
     """
     Determine if the face cannot be detected and trigger a warning
     """
-    if len(locations) == 0:
-        noface += 1
+    if len(locations) == fhp_time == 0:
+        fhp_time = time.time()
     elif len(locations) == 1:
         area = calculate_area(locations[0])
-        if area < face_area * 0.9:
-            noface += 1
-        else:
-            noface = noface_conti = 0
-    else:
-        noface = noface_conti = 0
+        if area < face_area * 0.9 and fhp_time == 0:
+            fhp_time = time.time()
+        elif area >= face_area * 0.9:
+            fhp_time = noface_conti = 0
+    elif len(locations) > 1:
+        fhp_time = noface_conti = 0
+    if fhp_time > 0:
+        duration = time.time() - fhp_time
+        if duration >= limit and noface_conti < 3:
+            thre = Thread(target=warning, args=["抬頭挺胸", "zh-tw"])
+            thre.start()
+            fhp_time = 0
+            noface_conti += 1
+    return (fhp_time, noface_conti)
 
-    if noface >= limit and noface_conti < 3:
-        thre = Thread(target=warning, args=["抬頭挺胸", "zh-tw"])
-        thre.start()
-        noface = 0
-        noface_conti += 1
-    return (noface, noface_conti)
 
-
-def show_video(locations,
-               shrink,
-               frame,
-               face_area,
-               text="Press ESC to quit") -> None:
+def show_label(locations: tuple,
+               shrink: float,
+               frame: np.ndarray,
+               face_area: int,
+               text: str = "Press ESC to quit") -> None:
+    """
+    Show labels on the video
+    """
     shape = frame.shape
     for location in locations:
         label_object(location, "face", shrink, frame, face_area)
@@ -96,7 +101,7 @@ def start_detection(shrink: float = 0.25,
     start to detect face
     """
     cam = cv2.VideoCapture(camera)
-    noface = 0
+    fhp_time = 0
     noface_conti = 0
     frame_count = 0
     ret_val = True
@@ -107,12 +112,11 @@ def start_detection(shrink: float = 0.25,
         small_frame = cv2.resize(frame, (0, 0), fx=shrink, fy=shrink)
         if frame_count % detect_every_n_frames == 0:
             locations = face_locations(small_frame)
-            limit = fhp_second * 4
-            noface, noface_conti = trigger_warning(locations, noface,
-                                                   noface_conti, limit,
-                                                   config["face_area"])
+            fhp_time, noface_conti = trigger_warning(locations, fhp_time,
+                                                     noface_conti, fhp_second,
+                                                     config["face_area"])
             if show:
-                show_video(locations, shrink, frame, config["face_area"])
+                show_label(locations, shrink, frame, config["face_area"])
                 cv2.imshow('web stream', frame)
                 if cv2.waitKey(1) == 27:
                     break  # esc to quit
@@ -140,7 +144,7 @@ def set_configure(shrink: float = 0.25,
         small_frame = cv2.resize(frame, (0, 0), fx=shrink, fy=shrink)
         if frame_count % detect_every_n_frames == 0:
             locations = face_locations(small_frame)
-            show_video(locations, shrink, frame, 1, text)
+            show_label(locations, shrink, frame, 1, text)
             wait_key = cv2.waitKey(1)
             if wait_key == 27:
                 break  # esc to quit
@@ -177,7 +181,6 @@ def main(show, camera, fhps, setting):
         print("setting mode")
         set_configure(0.25, 5, camera=camera)
         show = True
-
     start_detection(show=show, camera=camera, fhp_second=fhps)
 
 
