@@ -39,9 +39,8 @@ def label_object(location: tuple, text: str, shrink: float, frame: np.ndarray,
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
         cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255),
                       cv2.FILLED)
-        font = cv2.FONT_HERSHEY_DUPLEX
-        cv2.putText(frame, text, (left + 6, bottom - 6), font, 1.0,
-                    (255, 255, 255), 1)
+        cv2.putText(frame, text, (left + 6, bottom - 6),
+                    cv2.FONT_HERSHEY_DUPLEX, 1.0, (255, 255, 255), 1)
 
 
 def calculate_area(location: tuple):
@@ -88,23 +87,24 @@ def show_label(locations: tuple,
     shape = frame.shape
     for location in locations:
         label_object(location, "face", shrink, frame, face_area)
-    cv2.putText(frame, text, (40, 40), 0, 1e-3 * shape[0], (0, 0, 255),
+    cv2.putText(frame, text, (40, 40), cv2.FONT_HERSHEY_DUPLEX,
+                1.2e-3 * shape[0], (0, 0, 255),
                 int((shape[0] + shape[1]) // 900))
 
 
 def start_detection(shrink: float = 0.25,
                     detect_every_n_frames: int = 5,
-                    show: bool = False,
-                    camera: int = 1) -> None:
+                    show: bool = False) -> None:
     """
     start to detect face
     """
-    cam = cv2.VideoCapture(camera)
+    config = json.load(open("config.json", 'r'))
+    cam = cv2.VideoCapture(config["camera"])
     fhp_time = 0
     noface_conti = 0
     frame_count = 0
     ret_val = True
-    config = json.load(open("config.json", 'r'))
+
     while ret_val:
         ret_val, frame = cam.read()
         frame = cv2.flip(frame, 1)
@@ -126,27 +126,25 @@ def start_detection(shrink: float = 0.25,
     cv2.destroyAllWindows()
 
 
-def set_configure(shrink: float = 0.25,
-                  detect_every_n_frames: int = 5,
-                  camera: int = 1) -> None:
+def set_configure(shrink: float = 0.25, camera: int = 0) -> None:
     """
     Show webcam
     """
     area = []
     cam = cv2.VideoCapture(camera)
     frame_count = 0
-    ret_val = True
     lines = [
         "This is only for one user. Please keep your head up. Press Enter to start setting.",
+        f"Set camera. Press 0 for original one, press 1 for additional one. Now is {camera}",
         "Set limitation for Forward Head Posture. Press 1 for 10 sec, 2 for 1 min & 3 for 10 min.",
         "Detect face size. Setting will finish in 3 seconds."
     ]
     text = lines[0]
-    while ret_val:
-        ret_val, frame = cam.read()
+    while True:
+        _, frame = cam.read()
         frame = cv2.flip(frame, 1)
         small_frame = cv2.resize(frame, (0, 0), fx=shrink, fy=shrink)
-        if frame_count % detect_every_n_frames == 0:
+        if frame_count % 5 == 0:
             locations = face_locations(small_frame)
             show_label(locations, shrink, frame, 1, text)
             wait_key = cv2.waitKey(1)
@@ -154,18 +152,19 @@ def set_configure(shrink: float = 0.25,
                 break  # esc to quit
             if wait_key == 13:
                 text = lines[1]
-
             if text == lines[1]:
-                if chr(wait_key & 255) == "1":
-                    fhp_second = 10
-                elif chr(wait_key & 255) == "2":
-                    fhp_second = 60
-                elif chr(wait_key & 255) == "3":
-                    fhp_second = 600
-                if chr(wait_key & 255) in ["1", "2", "3"]:
+                if chr(wait_key & 255) == str(camera):
                     text = lines[2]
-                    count_down = 12
+                elif chr(wait_key & 255) == str(-1 * (camera - 1)):
+                    set_configure(camera=int(chr(wait_key & 255)))
+                    return
             if text == lines[2]:
+                fhps = {"1": 10, "2": 60, "3": 600}
+                if chr(wait_key & 255) in fhps.keys():
+                    fhp_second = fhps[chr(wait_key & 255)]
+                    text = lines[3]
+                    count_down = 12
+            if text == lines[3]:
                 area.append(calculate_area(location=locations[0]))
                 count_down -= 1
                 cv2.putText(frame, str(count_down // 4 + 1), (40, 200), 0,
@@ -177,25 +176,26 @@ def set_configure(shrink: float = 0.25,
             cv2.imshow('web stream', frame)
         frame_count += 1
     cv2.destroyAllWindows()
-    json.dump({
-        "face_area": int(np.mean(area)),
-        "fhp_second": fhp_second
-    }, open("config.json", "w"))
+    json.dump(
+        {
+            "camera": camera,
+            "face_area": int(np.mean(area)),
+            "fhp_second": fhp_second
+        }, open("config.json", "w"))
 
 
 @click.command()
 @click.option('--show', is_flag=True, default=False, help="show the video")
-@click.option('--camera', default=0, help="choose camera")
 @click.option('--setting', is_flag=True, default=False, help="set configure")
-def main(show, camera, setting):
+def main(show, setting):
     """
     start the program
     """
     if not os.path.isfile("config.json") or setting:
         print("setting mode")
-        set_configure(0.25, 5, camera=camera)
+        set_configure()
         show = True
-    start_detection(show=show, camera=camera)
+    start_detection(show=show)
 
 
 # pylint: disable=no-value-for-parameter
