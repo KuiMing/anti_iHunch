@@ -36,8 +36,8 @@ def calculate_area(location: tuple):
 def trigger_warning(locations: list, fhp_time: float, noface_conti: int,
                     limit: int, face_area: float) -> tuple:
     """
-        Determine if the face cannot be detected and trigger a warning
-        """
+    Determine if the face cannot be detected and trigger a warning
+    """
     if len(locations) == fhp_time == 0:
         fhp_time = time.time()
     elif len(locations) == 1:
@@ -59,16 +59,21 @@ def trigger_warning(locations: list, fhp_time: float, noface_conti: int,
 
 
 class FHPDetection():
+    """
+    Detect Forward Head Posture and Alert
+    """
     def __init__(
             self,
             shrink: float = 0.25,
             detect_every_n_frames: int = 5,
             show: bool = False,
+            config_file: str = "config.json",
             face_detector=None,
     ) -> None:
         self.shrink = shrink
         self.detect_every_n_frames = detect_every_n_frames
         self.show = show
+        self.config_file = config_file
         self.face_detector = face_detector
 
     def label_object(self, location: tuple, text: str, frame: np.ndarray,
@@ -100,11 +105,11 @@ class FHPDetection():
                     1.2e-3 * shape[0], (0, 0, 255),
                     int((shape[0] + shape[1]) // 900))
 
-    def start_detection(self, config_file) -> None:
+    def start_detection(self) -> None:
         """
         start to detect face
         """
-        config = json.load(open(config_file, 'r'))
+        config = json.load(open(self.config_file, 'r'))
         cam = cv2.VideoCapture(config['camera'])
         fhp_time = 0
         noface_conti = 0
@@ -189,4 +194,4 @@ class FHPDetection():
                 "camera": camera,
                 "face_area": int(np.mean(area)),
                 "fhp_second": fhp_second
-            }, open("config.json", "w"))
+            }, open(self.config_file, "w"))
