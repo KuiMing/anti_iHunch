@@ -7,7 +7,6 @@ import tempfile
 import time
 import cv2
 import numpy as np
-from face_recognition import face_locations
 from gtts import gTTS
 from pygame import mixer
 
@@ -65,7 +64,7 @@ class FHPDetection():
             shrink: float = 0.25,
             detect_every_n_frames: int = 5,
             show: bool = False,
-            face_detector=face_locations,
+            face_detector=None,
     ) -> None:
         self.shrink = shrink
         self.detect_every_n_frames = detect_every_n_frames
@@ -154,7 +153,7 @@ class FHPDetection():
                                      fx=self.shrink,
                                      fy=self.shrink)
             if frame_count % 5 == 0:
-                locations = face_locations(small_frame)
+                locations = self.face_detector(small_frame)
                 self.show_label(locations, frame, 1, text)
                 wait_key = cv2.waitKey(1)
                 if wait_key == 27:
