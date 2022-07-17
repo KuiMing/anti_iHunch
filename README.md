@@ -23,6 +23,10 @@ python3.7 setup.py install
 ```
 python3.7 main.py --setting
 ```
+  - Select Camera.
+  - Set maximum time period of FPH.
+  - The system will calculate the mean detected face area.
+  - Save the configure file.
 - Detect FHP
 ```
 python3.7 main.py --show
@@ -38,9 +42,8 @@ Use Anti iHunch without python script
 - [Mac Application URL](https://drive.google.com/file/d/1Yf_ujJDWH1jWn7MTkzFi3TJ2x7BQn8KA/view?usp=sharing)
 - Unzip `Anti_iHunch.zip`.
 - Double click `Anti_iHunch`.
-  
-![](images/anti_iHunch.png)
 
+![](images/anti_iHunch.png)
 - Click `Setting` to create `config.json` for your own.
 - Click `Detect FHP`.
 
