@@ -5,7 +5,7 @@ Detect FHP
 import os
 import click
 from face_recognition import face_locations
-from hunchback_detector import FHPDetection
+from anti_iHunch import FHPDetection
 
 
 @click.command()
