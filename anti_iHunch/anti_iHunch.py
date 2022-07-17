@@ -9,7 +9,6 @@ import cv2
 import numpy as np
 from gtts import gTTS
 from pygame import mixer
-
 # pylint: disable=maybe-no-member
 
 
@@ -101,9 +100,11 @@ class FHPDetection():
         shape = frame.shape
         for location in locations:
             self.label_object(location, "face", frame, face_area)
-        cv2.putText(frame, text, (40, 40), cv2.FONT_HERSHEY_DUPLEX,
-                    1.2e-3 * shape[0], (0, 0, 255),
-                    int((shape[0] + shape[1]) // 900))
+        for i, line in enumerate(text.split('\n')):
+            y_position = 40 + i * 40
+            cv2.putText(frame, line, (40, y_position), cv2.FONT_HERSHEY_DUPLEX,
+                        1.2e-3 * shape[0], (0, 0, 255),
+                        int((shape[0] + shape[1]) // 900))
 
     def start_detection(self) -> None:
         """
@@ -137,7 +138,7 @@ class FHPDetection():
 
         cv2.destroyAllWindows()
 
-    def set_configure(self, camera: int = 0) -> None:
+    def set_configure(self, camera: int = 0, skip: bool = False) -> None:
         """
         Show webcam
         """
@@ -145,31 +146,35 @@ class FHPDetection():
         area = []
         frame_count = 0
         lines = [
-            "This is only for one user. Please keep your head up. Press Enter to start setting.",
+            "This is only for one user. Please keep your head up.",
             f"Set camera. Press 0 for original one, press 1 for additional one. Now is {camera}",
             "Set limit for Forward Head Posture. Press A for 10 sec, B for 1 min & C for 10 min.",
             "Detect face size. Setting will finish in 3 seconds."
         ]
-        text = lines[0]
+        if skip:
+            text = lines[2]
+        else:
+            text = lines[0]
         while True:
             _, frame = cam.read()
             frame = cv2.flip(frame, 1)
             small_frame = cv2.resize(frame, (0, 0),
                                      fx=self.shrink,
                                      fy=self.shrink)
-            if frame_count % 5 == 0:
+            if frame_count % self.detect_every_n_frames == 0:
                 locations = self.face_detector(small_frame)
                 self.show_label(locations, frame, 1, text)
                 wait_key = cv2.waitKey(1)
                 if wait_key == 27:
                     break  # esc to quit
-                if wait_key == 13:
+                if wait_key == 13 and not skip:
                     text = lines[1]
-                if text == lines[1]:
+                if text == lines[1] and not skip:
                     if chr(wait_key & 255) == str(camera):
                         text = lines[2]
                     elif chr(wait_key & 255) == str(-1 * (camera - 1)):
-                        self.set_configure(camera=int(chr(wait_key & 255)))
+                        self.set_configure(camera=int(chr(wait_key & 255)),
+                                           skip=True)
                         return
                 if text == lines[2]:
                     fhps = {"A": 10, "B": 60, "C": 600}
