@@ -6,7 +6,7 @@ import sys
 import tkinter as tk
 from tkinter import ttk
 import cv2
-from hunchback_detector import FHPDetection
+from anti_iHunch import FHPDetection
 
 # pylint: disable=maybe-no-member
 
@@ -78,7 +78,7 @@ def main():
     GUI for Forward Head Position Alert
     """
     root = tk.Tk()
-    root.title("Anti-FHP")
+    root.title("Anti-iHunch")
     window_width = 250
     window_height = 90
     screen_width = root.winfo_screenwidth()
