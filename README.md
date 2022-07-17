@@ -38,8 +38,11 @@ Use Anti iHunch without python script
 - [Mac Application URL](https://drive.google.com/file/d/1Yf_ujJDWH1jWn7MTkzFi3TJ2x7BQn8KA/view?usp=sharing)
 - Unzip `Anti_iHunch.zip`.
 - Double click `Anti_iHunch`.
+  
 ![](images/anti_iHunch.png)
+
 - Click `Setting` to create `config.json` for your own.
 - Click `Detect FHP`.
-![](images/anti_iHunch.png)
+
+![](images/GUI.png)
 
