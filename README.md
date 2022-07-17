@@ -9,7 +9,37 @@ Forward Head Posture is the cause of discomfort in the upper back and the neck. 
 
 Confirm the relative position of the head through face detection, and detect whether the users are hunched. If the users are hunched, Anti iHunch will remind the users to keep their heads up.
 
+## Installation
 
+```
+git clone https://github.com/KuiMing/anti_iHunch.git
+cd anti_iHunch
+python3.7 setup.py install
+```
+
+## Use Anti iHunch with python script
+
+- Setting: 
+```
+python3.7 main.py --setting
+```
+- Detect FHP
+```
+python3.7 main.py --show
+```
+- Detect FHP without live video
+```
+python3.7 main.py
+```
 
 ## Mac Application
+
+Use Anti iHunch without python script
 - [Mac Application URL](https://drive.google.com/file/d/1Yf_ujJDWH1jWn7MTkzFi3TJ2x7BQn8KA/view?usp=sharing)
+- Unzip `Anti_iHunch.zip`.
+- Double click `Anti_iHunch`.
+![](images/anti_iHunch.png)
+- Click `Setting` to create `config.json` for your own.
+- Click `Detect FHP`.
+![](images/anti_iHunch.png)
+
