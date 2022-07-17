@@ -101,7 +101,7 @@ class FHPDetection():
         for location in locations:
             self.label_object(location, "face", frame, face_area)
         for i, line in enumerate(text.split('\n')):
-            y_position = 40 + i * 40
+            y_position = 40 + i * 42
             cv2.putText(frame, line, (40, y_position), cv2.FONT_HERSHEY_DUPLEX,
                         1.2e-3 * shape[0], (0, 0, 255),
                         int((shape[0] + shape[1]) // 900))
@@ -146,9 +146,9 @@ class FHPDetection():
         area = []
         frame_count = 0
         lines = [
-            "This is only for one user. Please keep your head up.",
-            f"Set camera. Press 0 for original one, press 1 for additional one. Now is {camera}",
-            "Set limit for Forward Head Posture. Press A for 10 sec, B for 1 min & C for 10 min.",
+            "This is only for one user. Please keep your head up. Press Enter to start setting.",
+            f"Set the camera. Press 0 for original one, press 1 for additional one. Now is {camera}",
+            "Set limit for Forward Head Posture.\nPlease keep your head up, and let the red rectangle be around your face.\nAdjust the camera until the rectangle is at the bottom of the frame.\nAnd then, press A for 10 sec, B for 1 min & C for 10 min.",
             "Detect face size. Setting will finish in 3 seconds."
         ]
         if skip:
