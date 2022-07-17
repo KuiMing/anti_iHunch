@@ -1,0 +1,5 @@
+
+opencv-python==4.5.1.48
+gTTS==2.2.4
+pygame==2.1.2
+numpy
