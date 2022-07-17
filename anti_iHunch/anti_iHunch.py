@@ -147,7 +147,7 @@ class FHPDetection():
         lines = [
             "This is only for one user. Please keep your head up. Press Enter to start setting.",
             f"Set camera. Press 0 for original one, press 1 for additional one. Now is {camera}",
-            "Set limit for Forward Head Posture. Press 1 for 10 sec, 2 for 1 min & 3 for 10 min.",
+            "Set limit for Forward Head Posture. Press A for 10 sec, B for 1 min & C for 10 min.",
             "Detect face size. Setting will finish in 3 seconds."
         ]
         text = lines[0]
@@ -172,9 +172,9 @@ class FHPDetection():
                         self.set_configure(camera=int(chr(wait_key & 255)))
                         return
                 if text == lines[2]:
-                    fhps = {"1": 10, "2": 60, "3": 600}
-                    if chr(wait_key & 255) in fhps.keys():
-                        fhp_second = fhps[chr(wait_key & 255)]
+                    fhps = {"A": 10, "B": 60, "C": 600}
+                    if chr(wait_key & 255).upper() in fhps.keys():
+                        fhp_second = fhps[chr(wait_key & 255).upper()]
                         text = lines[3]
                         count_down = 12
                 if text == lines[3]:
