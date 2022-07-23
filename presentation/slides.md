@@ -291,6 +291,10 @@ python3.7 main.py --show
 - 偵測戴口罩的臉
 - Microcontroller Unit
 
+---
+
+# 若有身體不適
+# 請及早就醫
 
 ---
 
