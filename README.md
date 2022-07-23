@@ -1,5 +1,7 @@
 # Anti iHunch
 
+## [Slides](https://kuiming.github.io/anti_iHunch/presentation/output/index.html#/)
+
 ## What is iHunch
 
 iHunch means Forward Head Posture (FHP). In Chinese, iHunch is "頸前傾".
@@ -19,19 +21,21 @@ python3.7 setup.py install
 
 ## Use Anti iHunch with python script
 
-- Setting: 
+### Setting: 
 ```
 python3.7 main.py --setting
 ```
   - Select Camera.
+  - Please keep your head up, and let the red rectangle be around your face.
+  - Adjust the camera until the rectangle is at the bottom of the frame.
   - Set maximum time period of FPH.
   - The system will calculate the mean detected face area.
-  - Save the configure file.
-- Detect FHP
+  - The system will save the configure file.
+### Detect FHP
 ```
 python3.7 main.py --show
 ```
-- Detect FHP without live video
+### Detect FHP without live video
 ```
 python3.7 main.py
 ```
