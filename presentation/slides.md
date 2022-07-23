@@ -186,16 +186,15 @@
 
 ## Setting
 
-- 選擇攝影機
+- 選擇攝影機（外接攝影機）
 - 抬頭挺胸
 - 調整攝影機的拍攝位置與角度
-- 選擇姿勢不良多久要被警告
+- 選擇容許持續姿勢不良的時間
 - 保持抬頭挺胸大概三秒
 
 ----
 
-<iframe data-src=https://www.youtube.com/embed/2yVrM1Uk53s width="100%" height="600px"></iframe>
-
+<iframe data-src=https://www.youtube.com/embed/IMO72hAXNo8 width="100%" height="600px"></iframe>
 
 ---
 
