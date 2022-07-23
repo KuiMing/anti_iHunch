@@ -1,7 +1,8 @@
 # 抬頭挺胸！
 # 打造防駝背神器～
 
-### Kui-Ming Chen, 2022 Coscup
+### 陳奎銘 `Kui-Ming Chen`
+### 2022 Coscup
 
 ---
 
