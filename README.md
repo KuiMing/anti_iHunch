@@ -1,6 +1,8 @@
 # Anti iHunch
 
-## [Slides](https://kuiming.github.io/anti_iHunch/presentation/output/index.html#/)
+## [Slides for COSCUP](https://kuiming.github.io/anti_iHunch/presentation/output/index.html#/)
+
+## [Slides for Microsoft MVP](https://kuiming.github.io/anti_iHunch/presentation/output_MVP/index.html#/)
 
 ## What is iHunch
 
