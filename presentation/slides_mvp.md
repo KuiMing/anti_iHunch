@@ -317,6 +317,11 @@ python3.7 main.py --show
 
 - 偵測戴口罩的臉
 - Microcontroller Unit
+  - Azure Face API
+    - Free Instace: 
+      - 20 transactions per minute
+      - 30000 transactions free per month
+  - 每分鐘偵測一次，每天可使用 16 小時
 
 ---
 
