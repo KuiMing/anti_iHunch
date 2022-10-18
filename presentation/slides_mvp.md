@@ -279,6 +279,16 @@ python3.7 main.py --show
 
 ![](media/result.png)
 
+
+
+----
+
+
+### 實驗結果
+
+![](media/Detected_Count.png)
+
+
 ---
 
 ## 使用心得
@@ -337,8 +347,10 @@ MCU and TOF Sensor
 <img src=media/IMG_1950.JPG width="80%">
 
 ----
+
 簡單測試結果
 <img src=media/TOF_result.png width="80%">
+
 
 ----
 
