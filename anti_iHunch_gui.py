@@ -7,26 +7,10 @@ import tkinter as tk
 from tkinter import ttk
 import cv2
 from anti_iHunch import FHPDetection
+from face_recognition import face_locations
 
 # pylint: disable=maybe-no-member
 
-
-def detect_face(small_frame):
-    """
-    Detect face
-    """
-    if getattr(sys, 'frozen', False):
-        path = os.path.dirname(sys.executable)
-    elif __file__:
-        path = os.path.dirname(__file__)
-    face_detector = cv2.CascadeClassifier(
-        os.path.join(path, "haarcascade_frontalface_default.xml"))
-    faces = face_detector.detectMultiScale(small_frame, minSize=(50, 50))
-    locations = []
-    for i in faces:
-        left, top, width, height = i
-        locations.append([top, left + width, top + height, left])
-    return locations
 
 
 class Application(ttk.Frame):
@@ -42,7 +26,7 @@ class Application(ttk.Frame):
 
         self.config_file = os.path.join(path, "config.json")
         self.fhp_detector = FHPDetection(show=True,
-                                         face_detector=detect_face,
+                                         face_detector=face_locations,
                                          config_file=self.config_file)
 
         ttk.Frame.__init__(self, master)
