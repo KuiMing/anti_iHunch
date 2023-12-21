@@ -13,6 +13,15 @@ Forward Head Posture is the cause of discomfort in the upper back and the neck. 
 
 Confirm the relative position of the head through face detection, and detect whether the users are hunched. If the users are hunched, Anti iHunch will remind the users to keep their heads up.
 
+## Dependencies
+
+```
+git clone https://github.com/davisking/dlib
+pip3.7 install build
+python3.7 -m build --wheel
+pip3.7 install dist/dlib-<version>.whl
+```
+
 ## Installation
 
 ```
