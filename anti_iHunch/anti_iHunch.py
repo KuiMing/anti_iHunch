@@ -10,19 +10,16 @@ import numpy as np
 from gtts import gTTS
 from pygame import mixer
 # pylint: disable=maybe-no-member
+import pyttsx3
 
 
 def warning(sentence: str, lang: str) -> None:
     """
-        Warning for hunchback
-        """
-    with tempfile.NamedTemporaryFile(delete=True) as file:
-        tts = gTTS(text=sentence, lang=lang)
-        tts.save('{}.mp3'.format(file.name))
-        mixer.init()
-        mixer.music.load('{}.mp3'.format(file.name))
-        mixer.music.play(1)
-
+    Warning for hunchback
+    """
+    engine = pyttsx3.init()
+    engine.say(sentence)
+    engine.runAndWait()
 
 def calculate_area(location: tuple):
     """
@@ -146,9 +143,9 @@ class FHPDetection():
         area = []
         frame_count = 0
         lines = [
-            "This is only for one user. Please keep your head up. Press Enter to start setting.",
-            f"Set the camera. Press 0 for original one, press 1 for additional one. Now is {camera}",
-            "Set limit for Forward Head Posture.\nPlease keep your head up, and let the red rectangle be around your face.\nAdjust the camera until the rectangle is at the bottom of the frame.\nAnd then, press A for 10 sec, B for 1 min & C for 10 min.",
+            "This is only for one user. Please keep your head up. \nPress Enter to start setting.",
+            f"Set the camera. Press 0 for original one, press 1 for additional one. \nNow is {camera}",
+            "Set limit for Forward Head Posture.\nPlease keep your head up. \nLet the red rectangle be around your face.\nAlign the camera so the rectangle is at the bottom.\nAnd then, press A for 10 sec, B for 1 min & C for 10 min.",
             "Detect face size. Setting will finish in 3 seconds."
         ]
         if skip:
