@@ -1,5 +1,6 @@
-
-opencv-python==4.5.1.48
-gTTS==2.2.4
-pygame==2.1.2
+opencv-python
+gTTS
+pygame
 numpy
+pyttsx3
+face_recognition
