@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+        html, body {
+            height: 100%; 
+            margin: 0;
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+        }
+        .content {
+            display: inline-block; /* Allows text-align to center it */
+            text-align: left; /* Aligns the text inside the pre block to the left */
+        }
+        .wrapper {
+            background: white; /* White background for the wrapper */
+            padding: 20px; /* Spacing around the content */
+            border-radius: 5px; /* Optional: Rounded corners for the wrapper */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Shadow for the wrapper */
+            text-align: center; /* Center text horizontally for the wrapper */
+            width: 90vw; 
+        }
+        :root {
+            --mermaid-font: 'JetBrains Mono', 'Fira Code Medium', 'Source Code Pro', monospace;
+            --mermaid-font-size: 0.8rem;
+          }
+
+        div.mermaid {
+            text-align: center;
+        }
+
+        .mermaid-large svg[id^="m"][width][height][viewBox] {
+            min-width: 900px;
+            max-width: 1800px;
+            width: 95%;
+            height: auto;
+        }
+
+        .mermaid-medium svg[id^="m"][width][height][viewBox] {
+            min-width: 500px;
+            max-width: 1000px;
+            width: 95%;
+            height: auto;
+        }
+
+        .mermaid-small svg[id^="m"][width][height][viewBox] {
+            min-width: 300px;
+            max-width: 750px;
+            width: 95%;
+            height: auto;
+        }
+    </style>
+  </head>
+  <body>
+    <BR>
+        <BR>
+        <BR>
+        <BR>
+        <BR>
+        <BR>  
+    <div class="wrapper">
+        <div class="'content" >
+            <h1>Work of Trading Automation</h1>
+            <pre class="mermaid">
+                graph LR
+                A[Info Site]-->|Match Information|B[Trading Automation] -->|預測Odds/得分|C[Admin Site] 
+                C -->|Log| B
+                C -->|UI|D[Operator]
+                classDef o1 fill:#FFE4CA,stroke:#333
+                classDef o2 fill:#FFEEDD,stroke:#333
+                classDef o3 fill:#FFDCB9,stroke:#333 
+                classDef red fill:#FFB5B5,stroke:#333
+                class A o1
+                class B red
+                class C o2
+                class D o3
+            </pre>
+            <h2>Soccer + Basketball + CSGO</h2>
+        </div>
+    </div>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Centered Vertical Text Layout</title>
+    <style>
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('鋼筆.ttf') format('truetype');
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+        }
+
+        .vertical-text {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            color: white;
+            font-size: 50px;
+            font-family: 'CustomFont', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="vertical-text">
+        吾少也賤 故多能鄙事
+    </div>
+
+    
+</body>
+</html>
