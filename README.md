@@ -15,11 +15,13 @@ Confirm the relative position of the head through face detection, and detect whe
 
 ## Installation
 
+- for Mac or Linux
 ```
 git clone https://github.com/KuiMing/anti_iHunch.git
 cd anti_iHunch
 python3.7 setup.py install
 ```
+- for [windows](https://github.com/KuiMing/anti_iHunch/tree/windows)
 
 ## Use Anti iHunch with python script
 
@@ -42,14 +44,15 @@ python3.7 main.py --show
 python3.7 main.py
 ```
 
-## Mac Application
+## Application
 
-Use Anti iHunch without python script
-- [Mac Application URL](https://drive.google.com/file/d/1Yf_ujJDWH1jWn7MTkzFi3TJ2x7BQn8KA/view?usp=sharing)
+- Use Anti iHunch without python script
+  - [Mac Application URL](https://drive.google.com/file/d/1Yf_ujJDWH1jWn7MTkzFi3TJ2x7BQn8KA/view?usp=sharing)
+  - [Windows Application URL](https://drive.google.com/file/d/1AbABfTq8dQC-oQFgzthcLrmw-EMAn6t_/view?usp=sharing)
 - Unzip `Anti_iHunch.zip`.
 - Double click `Anti_iHunch`.
 
-![](images/anti_iHunch.png)
+![](images/anti_iHunch.png) ![](images/head_up.png)
 - Click `Setting` to create `config.json` for your own.
 - Click `Detect FHP`.
 
