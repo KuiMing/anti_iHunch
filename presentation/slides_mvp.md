@@ -323,7 +323,7 @@ python3.7 main.py --show
 
 ---
 
-## Feature Work
+## Future Work
 
 - 偵測戴口罩的臉
 - Microcontroller Unit
